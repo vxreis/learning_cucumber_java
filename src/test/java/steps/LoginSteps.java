@@ -2,13 +2,20 @@ package steps;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.google.common.io.Files;
+
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -27,9 +34,22 @@ public class LoginSteps {
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);  // Espera implícita
 	}
 	
-	@After
+	@After(order = 0)
 	public static void quit() {
 		driver.quit();
+	}
+	
+	@After(order = 1)
+	public void takeScreenshot(Scenario scenario) {
+		TakesScreenshot camera = (TakesScreenshot) driver;
+		File screenshot = camera.getScreenshotAs(OutputType.FILE);
+		String scenarioId = scenario.getId().substring(scenario.getId().lastIndexOf(".feature:") + 9);
+		try {
+			String fileName = scenario.getName() + "_" + scenarioId + "_" + scenario.getStatus();
+			Files.move(screenshot, new File("results/screenshots/" + fileName + ".png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Dado("que o uauário está na página inicial")
