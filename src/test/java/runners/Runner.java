@@ -10,7 +10,7 @@ import io.cucumber.junit.CucumberOptions;
 		features   = "src\\test\\resources\\features\\login.feature",
 		glue 	   = "steps",
 		tags 	   = "@valid_login",
-		plugin 	   = "pretty",
+		plugin 	   = {"pretty", "html:target/report.html", "json:target/report.json", "junit:target/report.xml"},
 		monochrome = true
 		)
 
